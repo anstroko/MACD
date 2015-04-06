@@ -15,6 +15,10 @@ extern int TP=25;
 extern int SL=25;
 extern double Lot=0.1;
 extern int filtr=2;
+extern string Параметры5="Использование БУ";
+extern bool UseBU=true;
+extern int LevelBU=50;
+extern int StepBU=10; 
 extern string Параметры4="Signal Candle MACD (если 1 - старая версия, если 2 новая версия MACD)";
 extern int SignalCandle=2;
 extern bool TradeHighLow=true;
@@ -50,6 +54,10 @@ bool BuySignalOne;
 bool SellSignalOne;
 bool buymarket;
 bool sellmarket;
+bool BuyBU;
+bool SellBU;
+
+
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -100,8 +108,12 @@ ObjectSetText("label_object2","Текущее значение MACD ="+CurrentMACD,14,"Arial",R
            }
         }
      }
-    if (TradeBuy==false){BuyTrallOk=false;} 
-    if (TradeSell==false){SellTrallOk=false;}
+    if (TradeBuy==false){BuyTrallOk=false;BuyBU=false;} 
+    if (TradeSell==false){SellTrallOk=false;SellBU==false;}
+
+if ((BuyBU==false)&&(UseBU==true)&&(TradeBuy==true)){CheckBuyBU();}
+if ((SellBU==false)&&(UseBU==true)&&(TradeSell==true)){CheckSellBU();}
+
 
 if (buymarket==true){EditBuyOrder();buymarket=false;}    
 if (sellmarket==true){EditSellOrder();sellmarket=false;}   
@@ -350,6 +362,50 @@ for(int ii=0;ii<OrdersTotal();ii++)
      double sTP=OrderOpenPrice()-TP*k*Point;
      OrderModify(OrderTicket(),OrderOpenPrice(),sSL,sTP,0,Orange);    
 }}}
+
+return(0);}
+
+double CheckBuyBU()
+{
+
+  for(int ibb=0;ibb<OrdersTotal();ibb++)
+     {      if(OrderSelect(ibb,SELECT_BY_POS)==true)
+        {
+         if((OrderSymbol()==Symbol())&&(OrderMagicNumber()==Magic_Number) )
+           {
+            if(OrderType()==OP_BUY){ if (Ask>OrderOpenPrice()+LevelBU*Point*k) { Print ("Переводим в БУ");double SLB=OrderOpenPrice()+StepBU*Point*k;OrderModify(OrderTicket(),OrderOpenPrice(),SLB,OrderTakeProfit(),0,Orange);    BuyBU=true;   }
+            
+            
+            
+            }
+         
+           }
+        }
+     }
+
+
+
+return(0);}
+double CheckSellBU()
+{
+  for(int iss=0;iss<OrdersTotal();iss++)
+     {      if(OrderSelect(iss,SELECT_BY_POS)==true)
+        {
+         if((OrderSymbol()==Symbol())&&(OrderMagicNumber()==Magic_Number) )
+           {
+            if(OrderType()==OP_SELL){ if (Bid+LevelBU*Point*k<OrderOpenPrice()) { Print ("Переводим в БУ");double SLS=OrderOpenPrice()-StepBU*Point*k;OrderModify(OrderTicket(),OrderOpenPrice(),SLS,OrderTakeProfit(),0,Orange); SellBU=true;      }
+            
+            
+            
+            }
+         
+           }
+        }
+     }
+
+
+
+
 
 return(0);}
 

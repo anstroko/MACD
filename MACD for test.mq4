@@ -37,7 +37,9 @@ extern int PeriodMA=50;
 extern int ShiftMA=8;
 extern string Пapаметры4="Таймфреймы МА:PERIOD_D1,PERIOD_H4,PERIOD_H1";
 extern string TimeFrameMA=PERIOD_D1;
-
+extern string Пapаметры5="Динамический лот (MM=true)";
+extern bool MM=true;
+extern double DinamicDepo=200;
 
 
 extern string Coments;
@@ -56,7 +58,7 @@ bool buymarket;
 bool sellmarket;
 bool BuyBU;
 bool SellBU;
-
+double Kof;
 
 
 //+------------------------------------------------------------------+
@@ -98,6 +100,11 @@ ObjectSetText("label_object2","Текущее значение MACD ="+CurrentMACD,14,"Arial",R
   
   
   TradeBuy=false;TradeSell=false;
+  
+if (MM==true){
+ Kof=AccountBalance()/DinamicDepo;}
+ else {Kof=1;}
+  
     for(int in=0;in<OrdersTotal();in++)
      {      if(OrderSelect(in,SELECT_BY_POS)==true)
         {
@@ -131,8 +138,8 @@ if((SellTralEnd==true)&&(TradeSell==true))
   BuySignalOne=true;   
   DeleteStop(OP_BUYSTOP);
   if(TradeHighLow==true){OpenBuyPrice=High[1];} else {OpenBuyPrice=Ask;} 
-  if (IsTradeAllowed()) { if(    OrderSend(Symbol(),OP_BUYSTOP,Lot,OpenBuyPrice+filtr*k*Point,3*k,OpenBuyPrice+filtr*k*Point-SL*k*Point,OpenBuyPrice+filtr*k*Point+TP*k*Point,Coments,Magic_Number,0,Blue) < 0) 
-      {Alert("Ошибка открытия позиции № ", GetLastError());Print("Открываемся с рынка"); if(OrderSend(Symbol(),OP_BUY,Lot,Ask,3*k,NULL,NULL,Coments,Magic_Number,0,Blue)<0)
+  if (IsTradeAllowed()) { if(    OrderSend(Symbol(),OP_BUYSTOP,Lot*Kof,OpenBuyPrice+filtr*k*Point,3*k,OpenBuyPrice+filtr*k*Point-SL*k*Point,OpenBuyPrice+filtr*k*Point+TP*k*Point,Coments,Magic_Number,0,Blue) < 0) 
+      {Alert("Ошибка открытия позиции № ", GetLastError());Print("Открываемся с рынка"); if(OrderSend(Symbol(),OP_BUY,Lot*Kof,Ask,3*k,NULL,NULL,Coments,Magic_Number,0,Blue)<0)
       {Alert("Произошла ошибка при входе с рынка № ", GetLastError()," Коммент ",Coments);} else{buymarket=true;} }}
  }
  else {
@@ -140,8 +147,8 @@ if((SellTralEnd==true)&&(TradeSell==true))
  BuySignalOne=true;   
   DeleteStop(OP_BUYSTOP);
   if(TradeHighLow==true){OpenBuyPrice=High[1];} else {OpenBuyPrice=Ask;} 
-  if (IsTradeAllowed()) { if(    OrderSend(Symbol(),OP_BUYSTOP,Lot,OpenBuyPrice+filtr*k*Point,3*k,OpenBuyPrice+filtr*k*Point-SL*k*Point,OpenBuyPrice+filtr*k*Point+TP*k*Point,Coments,Magic_Number,0,Blue) < 0) 
-      {Alert("Ошибка открытия позиции № ", GetLastError());Print("Открываемся с рынка"); if(OrderSend(Symbol(),OP_BUY,Lot,Ask,3*k,NULL,NULL,Coments,Magic_Number,0,Blue)<0)
+  if (IsTradeAllowed()) { if(    OrderSend(Symbol(),OP_BUYSTOP,Lot*Kof,OpenBuyPrice+filtr*k*Point,3*k,OpenBuyPrice+filtr*k*Point-SL*k*Point,OpenBuyPrice+filtr*k*Point+TP*k*Point,Coments,Magic_Number,0,Blue) < 0) 
+      {Alert("Ошибка открытия позиции № ", GetLastError());Print("Открываемся с рынка"); if(OrderSend(Symbol(),OP_BUY,Lot*Kof,Ask,3*k,NULL,NULL,Coments,Magic_Number,0,Blue)<0)
       {Alert("Произошла ошибка при входе с рынка № ", GetLastError()," Коммент ",Coments);} else{buymarket=true;} }}
  }
  
@@ -157,8 +164,8 @@ if((SellTralEnd==true)&&(TradeSell==true))
       if(TradeHighLow==true){OpenSellPrice=Low[1];}else {OpenSellPrice=Bid;}
 
     if(IsTradeAllowed()) 
-        { if(OrderSend(Symbol(),OP_SELLSTOP,Lot,OpenSellPrice-filtr*k*Point,3*k,OpenSellPrice-filtr*k*Point+SL*k*Point,OpenSellPrice-filtr*k*Point-TP*k*Point,Coments,Magic_Number,0,Red) < 0)
-           {Alert("Произошла ошибка",GetLastError());Print("Открываемся с рынка");  if(OrderSend(Symbol(),OP_SELL,Lot,Bid,3*k,NULL,NULL,Coments,Magic_Number,0,Red)<0)
+        { if(OrderSend(Symbol(),OP_SELLSTOP,Lot*Kof,OpenSellPrice-filtr*k*Point,3*k,OpenSellPrice-filtr*k*Point+SL*k*Point,OpenSellPrice-filtr*k*Point-TP*k*Point,Coments,Magic_Number,0,Red) < 0)
+           {Alert("Произошла ошибка",GetLastError());Print("Открываемся с рынка");  if(OrderSend(Symbol(),OP_SELL,Lot*Kof,Bid,3*k,NULL,NULL,Coments,Magic_Number,0,Red)<0)
            {Alert("Произошла ошибка при входе с рынка № ",GetLastError()," Коммент ",Coments);}else{sellmarket=true;} }
         }
         }
@@ -169,8 +176,8 @@ else{
       if(TradeHighLow==true){OpenSellPrice=Low[1];}else {OpenSellPrice=Bid;}
 
     if(IsTradeAllowed()) 
-        { if(OrderSend(Symbol(),OP_SELLSTOP,Lot,OpenSellPrice-filtr*k*Point,3*k,OpenSellPrice-filtr*k*Point+SL*k*Point,OpenSellPrice-filtr*k*Point-TP*k*Point,Coments,Magic_Number,0,Red) < 0)
-           {Alert("Произошла ошибка",GetLastError());Print("Открываемся с рынка");  if(OrderSend(Symbol(),OP_SELL,Lot,Bid,3*k,NULL,NULL,Coments,Magic_Number,0,Red)<0)
+        { if(OrderSend(Symbol(),OP_SELLSTOP,Lot*Kof,OpenSellPrice-filtr*k*Point,3*k,OpenSellPrice-filtr*k*Point+SL*k*Point,OpenSellPrice-filtr*k*Point-TP*k*Point,Coments,Magic_Number,0,Red) < 0)
+           {Alert("Произошла ошибка",GetLastError());Print("Открываемся с рынка");  if(OrderSend(Symbol(),OP_SELL,Lot*Kof,Bid,3*k,NULL,NULL,Coments,Magic_Number,0,Red)<0)
            {Alert("Произошла ошибка при входе с рынка № ",GetLastError()," Коммент ",Coments);}else{sellmarket=true;} }
         }
       }
@@ -189,10 +196,10 @@ if (SignalCandle==2){
     if(TradeHighLow==true){OpenBuyPrice=High[1];} else {OpenBuyPrice=Close[1];}
    //    Coments="TP="+IntegerToString(TP)+" SL="+IntegerToString(SL)+" Filtr="+IntegerToString(filtr)+" BuyStartTralPoints="+DoubleToString(StartTralPoints,1)+" BuySizeTralPoints="+DoubleToString(SizeTralPoints,1);
    
-  if (IsTradeAllowed()) { if(    OrderSend(Symbol(),OP_BUYSTOP,Lot,OpenBuyPrice+filtr*k*Point,3*k,OpenBuyPrice+filtr*k*Point-SL*k*Point,OpenBuyPrice+filtr*k*Point+TP*k*Point,Coments,Magic_Number,0,Blue) < 0) 
+  if (IsTradeAllowed()) { if(    OrderSend(Symbol(),OP_BUYSTOP,Lot*Kof,OpenBuyPrice+filtr*k*Point,3*k,OpenBuyPrice+filtr*k*Point-SL*k*Point,OpenBuyPrice+filtr*k*Point+TP*k*Point,Coments,Magic_Number,0,Blue) < 0) 
       {Alert("Ошибка открытия позиции № ", GetLastError()," Коммент ",Coments);Print("Открываемся с рынка");
       
-      if(OrderSend(Symbol(),OP_BUY,Lot,Ask,3*k,NULL,NULL,Coments,Magic_Number,0,Blue)<0)
+      if(OrderSend(Symbol(),OP_BUY,Lot*Kof,Ask,3*k,NULL,NULL,Coments,Magic_Number,0,Blue)<0)
       {Alert("Произошла ошибка при входе с рынка № ", GetLastError()," Коммент ",Coments);} else {buymarket=true;} }}
        }
 else {
@@ -201,10 +208,10 @@ else {
     if(TradeHighLow==true){OpenBuyPrice=High[1];} else {OpenBuyPrice=Close[1];}
    //    Coments="TP="+IntegerToString(TP)+" SL="+IntegerToString(SL)+" Filtr="+IntegerToString(filtr)+" BuyStartTralPoints="+DoubleToString(StartTralPoints,1)+" BuySizeTralPoints="+DoubleToString(SizeTralPoints,1);
    
-  if (IsTradeAllowed()) { if(    OrderSend(Symbol(),OP_BUYSTOP,Lot,OpenBuyPrice+filtr*k*Point,3*k,OpenBuyPrice+filtr*k*Point-SL*k*Point,OpenBuyPrice+filtr*k*Point+TP*k*Point,Coments,Magic_Number,0,Blue) < 0) 
+  if (IsTradeAllowed()) { if(    OrderSend(Symbol(),OP_BUYSTOP,Lot*Kof,OpenBuyPrice+filtr*k*Point,3*k,OpenBuyPrice+filtr*k*Point-SL*k*Point,OpenBuyPrice+filtr*k*Point+TP*k*Point,Coments,Magic_Number,0,Blue) < 0) 
       {Alert("Ошибка открытия позиции № ", GetLastError()," Коммент ",Coments);Print("Открываемся с рынка");
       
-      if(OrderSend(Symbol(),OP_BUY,Lot,Ask,3*k,NULL,NULL,Coments,Magic_Number,0,Blue)<0)
+      if(OrderSend(Symbol(),OP_BUY,Lot*Kof,Ask,3*k,NULL,NULL,Coments,Magic_Number,0,Blue)<0)
       {Alert("Произошла ошибка при входе с рынка № ", GetLastError()," Коммент ",Coments);} else {buymarket=true;} }}
 
   }
@@ -222,10 +229,10 @@ if (UsingMA==false)  {
   //Coments="TP="+IntegerToString(TP)+" SL="+IntegerToString(SL)+" Filtr="+IntegerToString(filtr)+" BuyStartTralPoints="+DoubleToString(StartTralPoints,1)+" BuySizeTralPoints="+DoubleToString(SizeTralPoints,1);
  
     if(IsTradeAllowed()) 
-        { if(OrderSend(Symbol(),OP_SELLSTOP,Lot,OpenSellPrice-filtr*k*Point,3*k,OpenSellPrice-filtr*k*Point+SL*k*Point,OpenSellPrice-filtr*k*Point-TP*k*Point,Coments,Magic_Number,0,Red) < 0)
+        { if(OrderSend(Symbol(),OP_SELLSTOP,Lot*Kof,OpenSellPrice-filtr*k*Point,3*k,OpenSellPrice-filtr*k*Point+SL*k*Point,OpenSellPrice-filtr*k*Point-TP*k*Point,Coments,Magic_Number,0,Red) < 0)
            {Alert("Ошибка открытия позиции № ",GetLastError()," Коммент",Coments);Print("Открываемся с рынка");
            
-           if(OrderSend(Symbol(),OP_SELL,Lot,Bid,3*k,NULL,NULL,Coments,Magic_Number,0,Red)<0)
+           if(OrderSend(Symbol(),OP_SELL,Lot*Kof,Bid,3*k,NULL,NULL,Coments,Magic_Number,0,Red)<0)
            {Alert("Произошла ошибка при входе с рынка № ",GetLastError()," Коммент ",Coments);}else{sellmarket=true;}
             }
         }
@@ -237,10 +244,10 @@ else { if (iMA(NULL,TimeFrameMA,PeriodMA,ShiftMA,MODE_SMMA,PRICE_CLOSE,0)>Bid){
   //Coments="TP="+IntegerToString(TP)+" SL="+IntegerToString(SL)+" Filtr="+IntegerToString(filtr)+" BuyStartTralPoints="+DoubleToString(StartTralPoints,1)+" BuySizeTralPoints="+DoubleToString(SizeTralPoints,1);
  
     if(IsTradeAllowed()) 
-        { if(OrderSend(Symbol(),OP_SELLSTOP,Lot,OpenSellPrice-filtr*k*Point,3*k,OpenSellPrice-filtr*k*Point+SL*k*Point,OpenSellPrice-filtr*k*Point-TP*k*Point,Coments,Magic_Number,0,Red) < 0)
+        { if(OrderSend(Symbol(),OP_SELLSTOP,Lot*Kof,OpenSellPrice-filtr*k*Point,3*k,OpenSellPrice-filtr*k*Point+SL*k*Point,OpenSellPrice-filtr*k*Point-TP*k*Point,Coments,Magic_Number,0,Red) < 0)
            {Alert("Ошибка открытия позиции № ",GetLastError()," Коммент",Coments);Print("Открываемся с рынка");
            
-           if(OrderSend(Symbol(),OP_SELL,Lot,Bid,3*k,NULL,NULL,Coments,Magic_Number,0,Red)<0)
+           if(OrderSend(Symbol(),OP_SELL,Lot*Kof,Bid,3*k,NULL,NULL,Coments,Magic_Number,0,Red)<0)
            {Alert("Произошла ошибка при входе с рынка № ",GetLastError()," Коммент ",Coments);}else{sellmarket=true;}
             }
         }
@@ -343,7 +350,18 @@ double EditBuyOrder()
            {
      double bSL=OrderOpenPrice()-SL*k*Point;
      double bTP=OrderOpenPrice()+TP*k*Point;
-     OrderModify(OrderTicket(),OrderOpenPrice(),bSL,bTP,0,Orange);       
+     bool res=OrderModify(OrderTicket(),OrderOpenPrice(),bSL,bTP,0,Orange);    
+    if(!res)   
+               { Print("Ошибка модификации ордера. Код ошибки=",GetLastError());
+                Sleep(100);
+                     bool res=OrderModify(OrderTicket(),OrderOpenPrice(),bSL,bTP,0,Orange);    
+                           if(!res)  { 
+                Print("Ошибка модификации ордера. Закрываем ордер");
+                OrderClose(OrderTicket(),OrderLots(),MarketInfo(OrderSymbol(),MODE_BID),5*k,Black);
+                }
+                }
+            else
+               Print("Цена ордера успешно модифицирована.");
            
 }}}
 return(0);}
@@ -360,7 +378,21 @@ for(int ii=0;ii<OrdersTotal();ii++)
            
      double sSL=OrderOpenPrice()+SL*k*Point;
      double sTP=OrderOpenPrice()-TP*k*Point;
-     OrderModify(OrderTicket(),OrderOpenPrice(),sSL,sTP,0,Orange);    
+     bool res2=OrderModify(OrderTicket(),OrderOpenPrice(),sSL,sTP,0,Orange); 
+      if(!res2)   
+               { Print("Ошибка модификации ордера. Код ошибки=",GetLastError());
+                Sleep(100);
+                     bool res2=OrderModify(OrderTicket(),OrderOpenPrice(),sSL,sTP,0,Orange);    
+                           if(!res2)  { 
+                Print("Ошибка модификации ордера. Закрываем ордер");
+                OrderClose(OrderTicket(),OrderLots(),MarketInfo(OrderSymbol(),MODE_ASK),5*k,Black);
+                }
+                }
+            else
+               Print("Цена ордера успешно модифицирована.");
+     
+     
+        
 }}}
 
 return(0);}

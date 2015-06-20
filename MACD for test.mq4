@@ -13,6 +13,9 @@ extern string Пapаметры="Настройки советника";
 extern int Magic_Number=3213;
 extern int TP=25;
 extern int SL=25;
+extern string Пapаметры5="Динамический лот (MM=true)";
+extern bool MM=true;
+extern double DinamicDepo=200;
 extern double Lot=0.1;
 extern int filtr=2;
 extern string Параметры5="Использование БУ";
@@ -37,9 +40,7 @@ extern int PeriodMA=50;
 extern int ShiftMA=8;
 extern string Пapаметры4="Таймфреймы МА:PERIOD_D1,PERIOD_H4,PERIOD_H1";
 extern string TimeFrameMA=PERIOD_D1;
-extern string Пapаметры5="Динамический лот (MM=true)";
-extern bool MM=true;
-extern double DinamicDepo=200;
+
 
 
 extern string Coments;
